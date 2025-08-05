@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+"""
+Script to create a Chroma vector database from the expert_response feature in the CSV
+being used. This script reads a CSV file, extracts the 'expert_response' column,
+and creates a Chroma vector database from the text data.
+"""
+
+import os
+import shutil
+import random
+
+import openai
+import tiktoken
+import pandas as pd
+from dotenv import load_dotenv
+
+from langchain.schema import Document
+
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
+
+# load environment variables
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+enc = tiktoken.encoding_for_model("text-embedding-3-large")
+
+DATA_PATH = "data/" + os.getenv("INPUT_FILE")
+
+CHROMA_PATH = "chroma_db"
+
+
+def get_expert_responses() -> list[Document]:
+    """
+    Reads the CSV file and extracts the 'expert_response' column into a list. 
+
+    :return: list of expert responses (Document objects)
+    """
+    df = pd.read_csv(DATA_PATH)
+
+    if 'expert_response' not in df.columns:
+        raise ValueError(f"'expert_response' column not found in {DATA_PATH}")
+    
+    # extract the 'expert_response' column into a list
+    responses = df['expert_response'].dropna().tolist()
+
+    # convert to Document objects
+    documents = [Document(page_content=response) for response in responses]
+    return documents
+
+
+def create_chroma_db(responses: list[Document]):
+    """
+    Save the responses to a Chroma vector database. 
+
+    :param responses: list of expert responses (Document objects)
+    """
+
+    # clear out existing Chroma database
+    if os.path.exists(CHROMA_PATH):
+        shutil.rmtree(CHROMA_PATH)
+    
+    # create a new Chroma database
+    db = Chroma(
+        persist_directory=CHROMA_PATH,
+        embedding_function=OpenAIEmbeddings()
+    )
+
+    # add documents to the database
+    db.add_documents(responses)
+
+
+def add_to_chroma_db(responses: list[Document]):
+    """
+    Add new responses to an existing Chroma vector database.
+    
+    :param responses: list of expert responses (Document objects)
+    """
+    db = Chroma(
+        persist_directory=CHROMA_PATH,
+        embedding_function=OpenAIEmbeddings()
+    )
+
+    # add documents to the database
+    db.add_documents(responses)
+
+
+def main():
+    """
+    Main function to create the Chroma vector database.
+    """
+    responses = get_expert_responses()
+
+    if not responses:
+        print("No expert responses found.")
+        return
+
+    create_chroma_db(responses)
+    print(f"Chroma vector database created with {len(responses)} documents.")
