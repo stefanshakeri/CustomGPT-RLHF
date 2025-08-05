@@ -102,3 +102,7 @@ def main():
 
     create_chroma_db(responses)
     print(f"Chroma vector database created with {len(responses)} documents.")
+
+
+if __name__ == "__main__":
+    main()

@@ -72,3 +72,9 @@ def main():
 
     if os.path.exists(CHROMA_PATH):
         print(f"{len(documents)} LLM responses added to Chroma database at {CHROMA_PATH}.")
+    else:
+        print(f"Failed to add LLM responses to Chroma database at {CHROMA_PATH}.")
+
+
+if __name__ == "__main__":
+    main()
