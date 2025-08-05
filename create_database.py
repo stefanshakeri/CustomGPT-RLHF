@@ -7,7 +7,6 @@ and creates a Chroma vector database from the text data.
 
 import os
 import shutil
-import random
 
 import openai
 import tiktoken
@@ -27,7 +26,7 @@ enc = tiktoken.encoding_for_model("text-embedding-3-large")
 
 DATA_PATH = "data/" + os.getenv("INPUT_FILE")
 
-CHROMA_PATH = "chroma_db"
+CHROMA_PATH = os.getenv("CHROMA_PATH", "chroma_db")
 
 
 def get_expert_responses() -> list[Document]:
@@ -44,14 +43,22 @@ def get_expert_responses() -> list[Document]:
     # extract the 'expert_response' column into a list
     responses = df['expert_response'].dropna().tolist()
 
-    # convert to Document objects
-    documents = [Document(page_content=response) for response in responses]
+    # convert to Document objects with metadata of question number and response type
+    documents = []
+
+    for i, response in enumerate(responses):
+        doc = Document(
+            page_content=response,
+            metadata={"question_id": i, "type": "expert"}
+        )
+        documents.append(doc)
+
     return documents
 
 
 def create_chroma_db(responses: list[Document]):
     """
-    Save the responses to a Chroma vector database. 
+    Save the responses to a Chroma vector database. Each expert response is labeled as an expert response in the database.
 
     :param responses: list of expert responses (Document objects)
     """
