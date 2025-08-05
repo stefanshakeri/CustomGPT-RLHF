@@ -5,16 +5,12 @@ vector embeddings and save them in an existing Chroma vector database.
 """
 
 import os
-import shutil
 
 import openai
 import pandas as pd
 from dotenv import load_dotenv
 
 from langchain.schema import Document
-
-from langchain_openai import OpenAIEmbeddings
-from langchain_chroma import Chroma
 
 from create_database import DATA_PATH, CHROMA_PATH, add_to_chroma_db
 

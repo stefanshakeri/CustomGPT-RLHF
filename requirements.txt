@@ -1,0 +1,7 @@
+dotenv==0.9.9
+langchain==0.3.26
+langchain-chroma==0.2.4
+langchain-openai==0.3.25
+openai==1.90.0
+pandas==2.3.0
+python-dotenv==1.1.0
