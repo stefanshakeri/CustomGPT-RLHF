@@ -9,7 +9,6 @@ import os
 import shutil
 
 import openai
-import tiktoken
 import pandas as pd
 from dotenv import load_dotenv
 
@@ -22,7 +21,6 @@ from langchain_chroma import Chroma
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-enc = tiktoken.encoding_for_model("text-embedding-3-large")
 
 DATA_PATH = "data/" + os.getenv("INPUT_FILE")
 
@@ -77,14 +75,14 @@ def create_chroma_db(responses: list[Document]):
     db.add_documents(responses)
 
 
-def add_to_chroma_db(responses: list[Document]):
+def add_to_chroma_db(responses: list[Document], chroma_path: str = CHROMA_PATH):
     """
     Add new responses to an existing Chroma vector database.
     
     :param responses: list of expert responses (Document objects)
     """
     db = Chroma(
-        persist_directory=CHROMA_PATH,
+        persist_directory=chroma_path,
         embedding_function=OpenAIEmbeddings()
     )
 
