@@ -21,3 +21,26 @@ The two LLM responses will be vectored so that they can be compared to the exper
 
 ### Responses Comparison
 The LLM responses and expert responses will be compared through cosine similarity to evaluate the strength of the LLM responses to determine which one was superior. A score will then be applied to each LLM response and outputted in a CSV. 
+
+## Usage
+
+### Environment Variables
+Create a ```.env``` file with the following variables:
+```
+OPENAI_API_KEY='[your OpenAI API key]'
+INPUT_FILE='[the name of your csv file, including the ".csv" portion]'
+CHROMA_PATH='[the path name of where you want to store your local Chroma database]'
+```
+
+### Create Chroma Database
+To create the Chroma vector database, starting off with the expert responses, run
+```
+python create_database.py
+```
+Re-run that line to recreate the database with a fresh set of expert responses when necessary. 
+
+### Add LLM Responses
+To add the LLM responses to the Chroma vector database, run
+```
+python add_llm_responses.py
+```
