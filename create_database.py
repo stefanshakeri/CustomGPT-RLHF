@@ -21,7 +21,8 @@ from langchain_chroma import Chroma
 load_dotenv()
 
 # OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+openai.api_key = OPENAI_API_KEY
 # CSV file path
 DATA_PATH = "data/" + os.getenv("INPUT_FILE", "responses.csv")
 # Chroma database path

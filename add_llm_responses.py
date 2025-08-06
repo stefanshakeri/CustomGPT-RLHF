@@ -8,16 +8,12 @@ import os
 
 import openai
 import pandas as pd
-from dotenv import load_dotenv
 
 from langchain.schema import Document
 
-from create_database import DATA_PATH, CHROMA_PATH, add_to_chroma_db
+from create_database import OPENAI_API_KEY, DATA_PATH, CHROMA_PATH, add_to_chroma_db
 
-# load environment variables
-load_dotenv()
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = OPENAI_API_KEY
 
 
 def get_llm_responses() -> list[Document]:
