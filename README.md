@@ -28,9 +28,13 @@ The LLM responses and expert responses will be compared through cosine similarit
 Create a ```.env``` file with the following variables:
 ```
 OPENAI_API_KEY='[your OpenAI API key]'
-INPUT_FILE='[the name of your csv file, including the ".csv" portion]'
+INPUT_FILE='[the name of your input CSV file, including the ".csv" portion]'
 CHROMA_PATH='[the path name of where you want to store your local Chroma database]'
+OUTPUT_FILE='[the name of your output CSV file, including the ".csv" portion]'
 ```
+
+### Input CSV File
+Create a CSV file in the ```data``` directory with the schema specified above. 
 
 ### Create Chroma Database
 To create the Chroma vector database, starting off with the expert responses, run
@@ -44,3 +48,10 @@ To add the LLM responses to the Chroma vector database, run
 ```
 python add_llm_responses.py
 ```
+
+### Compare Responses
+To compare the LLM responses with the expert responses through cosine similiarity, run
+```
+python compare_responses.py
+```
+The expert response and corresponding LLM responses, along with their similarity scores, will be outputted to your specified CSV file in the ```data``` directory. 
