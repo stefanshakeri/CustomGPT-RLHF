@@ -22,7 +22,7 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-DATA_PATH = "data/" + os.getenv("INPUT_FILE")
+DATA_PATH = "data/" + os.getenv("INPUT_FILE", "responses.csv")
 
 CHROMA_PATH = os.getenv("CHROMA_PATH", "chroma_db")
 
@@ -45,10 +45,12 @@ def get_expert_responses() -> list[Document]:
     documents = []
 
     for i, response in enumerate(responses):
+        print(f"Processing response {i + 1}/{len(responses)}")
         doc = Document(
             page_content=response,
             metadata={"question_id": i, "type": "expert"}
         )
+        print(f"Sample content: {doc.page_content[:50]}...")  # Print first 50 characters for debugging
         documents.append(doc)
 
     return documents
