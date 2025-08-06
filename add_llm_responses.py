@@ -35,7 +35,7 @@ def get_llm_responses() -> list[Document]:
     for i, response in enumerate(responses):
         doc = Document(
             page_content=response,
-            metadata={"question_id": i, "type": "llm_1"}
+            metadata={"question_id": i, "type": "llm"}
         )
         documents.append(doc)
 
@@ -47,7 +47,7 @@ def get_llm_responses() -> list[Document]:
         print(f"Processing LLM response {i + 1}/{len(responses)}")
         doc = Document(
             page_content=response,
-            metadata={"question_id": i, "type": "llm_2"}
+            metadata={"question_id": i, "type": "llm"}
         )
         print(f"Sample content: {doc.page_content[:50]}...")
         documents.append(doc)
