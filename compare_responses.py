@@ -37,7 +37,7 @@ def prepare_db() -> Chroma:
     return db
 
 
-def get_expert_responses(db: Chroma) -> list[str]:
+def get_expert_responses(db: Chroma) -> list[tuple[str, int]]:
     """
     Retrieve expert responses from the Chroma database and 
     return them as a list. 
@@ -53,12 +53,12 @@ def get_expert_responses(db: Chroma) -> list[str]:
     if not expert_docs:
         raise ValueError("No expert responses found in the database.")
     
-    expert_list = expert_docs["documents"]
+    expert_list = list(zip(expert_docs["documents"], [meta["question_id"] for meta in expert_docs["metadatas"]]))
 
     return expert_list
 
 
-def find_similar_responses(expert_response: str, db: Chroma) -> list[tuple[Document, float]]:
+def find_similar_responses(expert_response: tuple[str, int], db: Chroma) -> list[tuple[Document, float]]:
     """
     Find the two most similar LLM responses to a given expert response. 
 
@@ -66,8 +66,16 @@ def find_similar_responses(expert_response: str, db: Chroma) -> list[tuple[Docum
     :param db: Chroma database instance
     :return: list of the two most similar LLM responses and their similarity scores
     """
+    # define the filter to find LLM responses with the same question_id as the expert response
+    filter = {
+    "$and": [
+        {"type": {"$eq": "llm"}},
+        {"question_id": {"$eq": expert_response[1]}}
+        ]
+    }
+    
     results = db.similarity_search_with_relevance_scores(
-        expert_response, k=2, filter={"type": "llm"})
+        expert_response[0], k=2, filter=filter)
     
     #print(f"similarity search results: {results}")
 
@@ -112,10 +120,10 @@ def main():
     # for each expert response, find the two most similar LLM responses
     comparison_results = pd.DataFrame(columns=["expert_response", "llm_response_1", "llm_response_2", "similarity_1", "similarity_2"])
     for expert_response in expert_list:
-        print(f"Comparing expert response: {expert_response[:50]}...")
+        print(f"Comparing expert response: {expert_response[0][:50]}...")
         similar_responses = find_similar_responses(expert_response, db)
 
-        comparison_results = add_to_dataframe(expert_response, similar_responses, comparison_results)
+        comparison_results = add_to_dataframe(expert_response[0], similar_responses, comparison_results)
 
     # output results into a CSV file
     comparison_results.to_csv(OUTPUT_PATH, index=False)
