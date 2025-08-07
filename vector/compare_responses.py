@@ -14,12 +14,12 @@ from langchain.schema import Document
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
-from create_database import OPENAI_API_KEY, CHROMA_PATH
+from vector.create_database import OPENAI_API_KEY, CHROMA_PATH
 
 # load environment variables
 load_dotenv()
 
-OUTPUT_PATH = "data/" + os.getenv("OUTPUT_FILE", "comparison_results.csv")
+OUTPUT_PATH = "../data/" + os.getenv("OUTPUT_FILE", "comparison_results.csv")
 
 openai.api_key = OPENAI_API_KEY
 
@@ -73,7 +73,7 @@ def find_similar_responses(expert_response: tuple[str, int], db: Chroma) -> list
         {"question_id": {"$eq": expert_response[1]}}
         ]
     }
-    
+
     results = db.similarity_search_with_relevance_scores(
         expert_response[0], k=2, filter=filter)
     

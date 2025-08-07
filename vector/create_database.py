@@ -23,7 +23,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
 # CSV file path
-DATA_PATH = "data/" + os.getenv("INPUT_FILE", "responses.csv")
+DATA_PATH = "../data/" + os.getenv("INPUT_FILE", "responses.csv")
 # Chroma database path
 CHROMA_PATH = os.getenv("CHROMA_PATH", "chroma_db")
 
