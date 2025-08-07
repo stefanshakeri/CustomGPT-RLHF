@@ -11,7 +11,7 @@ import pandas as pd
 
 from langchain.schema import Document
 
-from vector.create_database import OPENAI_API_KEY, DATA_PATH, CHROMA_PATH, add_to_chroma_db
+from create_database import OPENAI_API_KEY, DATA_PATH, CHROMA_PATH, add_to_chroma_db
 
 openai.api_key = OPENAI_API_KEY
 

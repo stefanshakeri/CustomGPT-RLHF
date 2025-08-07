@@ -14,12 +14,12 @@ from langchain.schema import Document
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
-from vector.create_database import OPENAI_API_KEY, CHROMA_PATH
+from create_database import OPENAI_API_KEY, CHROMA_PATH
 
 # load environment variables
 load_dotenv()
 
-OUTPUT_PATH = "../data/" + os.getenv("OUTPUT_FILE", "comparison_results.csv")
+OUTPUT_PATH = "data/" + os.getenv("OUTPUT_FILE", "comparison_results.csv")
 
 openai.api_key = OPENAI_API_KEY
 

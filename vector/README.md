@@ -35,19 +35,19 @@ Create a CSV file in the ```data``` directory with the schema specified above.
 ### Create Chroma Database
 To create the Chroma vector database, starting off with the expert responses, run
 ```
-python create_database.py
+python vector/create_database.py
 ```
 Re-run that line to recreate the database with a fresh set of expert responses when necessary. 
 
 ### Add LLM Responses
 To add the LLM responses to the Chroma vector database, run
 ```
-python add_llm_responses.py
+python vector/add_llm_responses.py
 ```
 
 ### Compare Responses
 To compare the LLM responses with the expert responses through cosine similiarity, run
 ```
-python compare_responses.py
+python vector/compare_responses.py
 ```
 The expert response and corresponding LLM responses, along with their similarity scores, will be outputted to your specified CSV file in the ```data``` directory. 
