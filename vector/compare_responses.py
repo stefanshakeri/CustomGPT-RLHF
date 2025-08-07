@@ -14,7 +14,7 @@ from langchain.schema import Document
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
-from create_database import OPENAI_API_KEY, CHROMA_PATH
+from vector.create_database import OPENAI_API_KEY, CHROMA_PATH
 
 # load environment variables
 load_dotenv()
