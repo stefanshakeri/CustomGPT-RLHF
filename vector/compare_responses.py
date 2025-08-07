@@ -4,7 +4,6 @@ Script to compare expert and LLM responses in a Chroma vector database through c
 """
 
 import os
-import argparse
 
 import openai
 import pandas as pd
