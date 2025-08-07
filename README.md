@@ -27,6 +27,7 @@ Create a ```.env``` file with the following variables:
 OPENAI_API_KEY='[your OpenAI API key]'
 INPUT_FILE='[the name of your input CSV file, including the ".csv" portion]'
 CHROMA_PATH='[the path name of where you want to store your local Chroma database]'
-OUTPUT_FILE='[the name of your output CSV file, including the ".csv" portion]'
+OUTPUT_FILE='[the name of your output CSV file for the vectorization method, including the ".csv" portion]'
+OUTPUT_CSV='[the name of your output CSV file for the agentic method, including the ".csv" portion]'
 GPT_MODEL='[OpenAI model being used]'
 ```
