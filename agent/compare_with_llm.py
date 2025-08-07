@@ -10,7 +10,7 @@ import openai
 import pandas as pd
 from dotenv import load_dotenv
 
-from agents import Agent, Runner
+from openai import OpenAI
 from langchain.schema import Document
 
 from vector.create_database import OPENAI_API_KEY, get_expert_responses
@@ -20,21 +20,19 @@ from vector.add_llm_responses import get_llm_responses
 load_dotenv()
 
 OUTPUT_PATH = "data/" + os.getenv("OUTPUT_CSV", "llm_comparison_results.csv")
+GPT_MODEL = os.getenv("GPT_MODEL", "gpt-4o")
 
 openai.api_key = OPENAI_API_KEY
 
 # initialize the GPT-4o model
-judge_agent = Agent(
-    name="LLM Judge",
-    instructions='''
-    You are an expert judge tasked with comparing two LLM responses to an expert response. 
-    Evaluate the similarity of each LLM response to the expert response and determine which LLM response is more similar.
-    Do not evaluate the similarity of the LLM responses to the expert response based on syntax or length of response, only on the content and meaning of the response.
-    ''',
-)
+client = OpenAI()
 
 # define the input text for the judge agent
 input_text = '''
+You are an expert judge tasked with comparing two LLM responses to an expert response. 
+Evaluate the similarity of each LLM response to the expert response and determine which LLM response is more similar.
+Do not evaluate the similarity of the LLM responses to the expert response based on syntax or length of response, only on the content and meaning of the response.
+
 Expert Response: {expert_response}
 
 LLM Response 1: {llm_response_1}
@@ -102,15 +100,30 @@ def compare_responses(responses: list[tuple[str, str, str]]):
 
     :param responses: list of tuples containing expert response, LLM response 1, and LLM response 2
     """
+    # Iterate through each response and get the comparison from the GPT-4o model
+    if not responses:
+        print("No responses to compare.")
+        return
+    
     for i, (expert_response, llm_response_1, llm_response_2) in enumerate(responses):
-        comparison = Runner.run(judge_agent, 
-                                input=input_text.format(
-                                    expert_response=expert_response,
-                                    llm_response_1=llm_response_1,
-                                    llm_response_2=llm_response_2
-                                ))
-        print(f"Comparison {i + 1}: {comparison}")
-        add_to_csv(expert_response, llm_response_1, llm_response_2, comparison)
+        comparison = client.chat.completions.create(
+            model=GPT_MODEL,
+            messages=[
+                {"role": "user", "content": input_text.format(
+                    expert_response=expert_response,
+                    llm_response_1=llm_response_1,
+                    llm_response_2=llm_response_2
+                )}
+            ]
+        )
+
+        if not comparison.choices or not comparison.choices[0].message.content:
+            print(f"Error: No comparison result for response {i + 1}.")
+            continue
+
+        comparison_text = comparison.choices[0].message.content
+        print(f"Comparison {i + 1}: {comparison_text[:50]}...")
+        add_to_csv(expert_response, llm_response_1, llm_response_2, comparison_text)
 
 
 def main():
