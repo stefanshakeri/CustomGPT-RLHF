@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to use an GPT-4o model agent acting as a judge to compare the similarity in content
+Script to use a GPT-4o model agent acting as a judge to compare the similarity in content
 of the two LLM responses to the expert response to determine which is more similar.
 """
 
