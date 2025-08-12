@@ -5,6 +5,7 @@ Uses the CSV file created through the agent.compare_with_llm script to compare t
 """
 
 import os
+from pathlib import Path
 
 import openai
 import pandas as pd
@@ -104,7 +105,42 @@ def determine_better_response(llm_judge_feedback: str) -> int:
     return int(response_text)
 
 
+def modify_prompt(responses: tuple[str, str, str, str], better_response_num: int) -> str:
+    """
+    Modify the Custom GPT prompt based on the expert response, LLM response, and LLM judge feedback.
 
+    :param responses: a tuple containing expert response, LLM response, and LLM judge feedback
+    :return: the modified prompt for the Custom GPT
+    """
+    # get the prompt
+    prompt = Path(INPUT_TXT).read_text(encoding="utf-8").strip()
+
+    print(f"Current prompt: {prompt[:50]}...")
+
+    better_response = responses[better_response_num]
+
+    # prompt the GPT-4o model to modify the prompt
+    response = client.chat.completions.create(
+        model=GPT_MODEL,
+        messages=[
+            {"role": "user", "content": prompt_modifier_text.format(
+                expert_response=responses[0],
+                llm_response=better_response,
+                llm_judge_feedback=responses[3],
+                current_prompt=prompt
+            )}
+        ]
+    )
+
+    # extract the modified prompt
+    modified_prompt = response.choices[0].message.content.strip()
+
+    if not modified_prompt:
+        raise ValueError("No modified prompt returned from GPT-4o model.")
+    
+    print(f"Modified prompt: {modified_prompt[:50]}...")
+
+    return modified_prompt
 
 
 def main():
@@ -113,9 +149,15 @@ def main():
     """
     responses = get_all_responses()
 
-    better_response_num = determine_better_response(responses[0][3])  # Use the first response's judge feedback for demonstration
+    better_response_num = determine_better_response(responses[0][3]) - 1
 
     print(f"Better response is from prompt: {better_response_num}")
+
+    modified_prompt = modify_prompt(responses[0], better_response_num)
+
+    # write the modified prompt to the output file
+    Path(OUTPUT_TXT).write_text(modified_prompt, encoding="utf-8")
+    print(f"Modified prompt saved to {OUTPUT_TXT}")
 
 
 if __name__ == "__main__":
