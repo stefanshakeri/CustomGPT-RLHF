@@ -38,6 +38,8 @@ Expert Response: {expert_response}
 LLM Response: {llm_response}
 LLM Judge Feedback: {llm_judge_feedback}
 Current Prompt: {current_prompt}
+
+Output only the modified prompt, in Markdown format, without any additional text or formatting.
 '''
 
 better_response_evaluator_text = '''
@@ -105,16 +107,13 @@ def determine_better_response(llm_judge_feedback: str) -> int:
     return int(response_text)
 
 
-def modify_prompt(responses: tuple[str, str, str, str], better_response_num: int) -> str:
+def modify_prompt(responses: tuple[str, str, str, str], better_response_num: int, prompt: str) -> str:
     """
     Modify the Custom GPT prompt based on the expert response, LLM response, and LLM judge feedback.
 
     :param responses: a tuple containing expert response, LLM response, and LLM judge feedback
     :return: the modified prompt for the Custom GPT
     """
-    # get the prompt
-    prompt = Path(INPUT_TXT).read_text(encoding="utf-8").strip()
-
     print(f"Current prompt: {prompt[:50]}...")
 
     better_response = responses[better_response_num]
@@ -142,7 +141,6 @@ def modify_prompt(responses: tuple[str, str, str, str], better_response_num: int
 
     return modified_prompt
 
-
 def main():
     """
     Main function to read responses from CSV and determine which prompt is better.
@@ -153,7 +151,14 @@ def main():
 
     print(f"Better response is from prompt: {better_response_num}")
 
-    modified_prompt = modify_prompt(responses[0], better_response_num)
+    # get the current prompt
+    current_prompt = Path(INPUT_TXT).read_text(encoding="utf-8").strip()
+
+    modified_prompt = modify_prompt(responses[0], better_response_num, current_prompt)
+
+    # if there's more than one response, modify the prompt for each response
+    for i in range(1, len(responses)):
+        modified_prompt = modify_prompt(responses[i], better_response_num, modified_prompt)
 
     # write the modified prompt to the output file
     Path(OUTPUT_TXT).write_text(modified_prompt, encoding="utf-8")
