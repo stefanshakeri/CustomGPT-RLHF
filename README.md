@@ -30,4 +30,15 @@ CHROMA_PATH='[the path name of where you want to store your local Chroma databas
 OUTPUT_FILE='[the name of your output CSV file for the vectorization method, including the ".csv" portion]'
 OUTPUT_CSV='[the name of your output CSV file for the agentic method, including the ".csv" portion]'
 GPT_MODEL='[OpenAI model being used]'
+INPUT_PROMPT='[the name of your input Custom GPT prompt file, as a text file]'
+OUTPUT_PROMPT_AGENT='[the name of your output Custom GPT prompt file for agentic use, as a text file]'
+```
+
+### Feedback
+Use either the agentic method in the ```agent``` directory or the vectorization method in the ```vector``` directory to compare the responses. 
+
+### Reinforcement Learning
+If the agentic comparison method was used, to perform the reinforcement learning process and edit the Custom GPT prompt, run
+```
+python -m RLHF.perform_rlhf_agent
 ```
